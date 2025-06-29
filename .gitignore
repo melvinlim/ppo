@@ -4,3 +4,4 @@ recordings
 cnn-Tetris-GameBoy.zip
 venv
 saves
+__pycache__
