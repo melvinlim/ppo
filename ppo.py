@@ -108,7 +108,7 @@ def wrap_deepmind_retro(env):
     env = ClipRewardEnv(env)
     return env
 
-
+import os
 def ppoMain():
 
     parser = argparse.ArgumentParser()
@@ -117,8 +117,7 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
-    modelPath='cnn-'+args.game
-    assert(modelPath=='cnn-Tetris-GameBoy')
+    modelPath='models/cnn-'+args.game
 
     def make_env():
         recording='recordings/target'
@@ -134,13 +133,18 @@ def ppoMain():
         env=venv,
         verbose=1,
     )
-    model=model.load(path=modelPath,env=venv)
+    if(os.path.exists(modelPath)):
+        print('loading model from modelPath:',modelPath)
+        model=model.load(path=modelPath,env=venv)
+    else:
+        print('warning, modelPath:',modelPath,'not found.  training a new model')
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
     )
     venv.close()
 
+    print('saving model to modelPath:',modelPath)
     model.save(path=modelPath)
 
 if __name__ == "__main__":
