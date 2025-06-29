@@ -3,7 +3,7 @@ Interact with Gym environments using the keyboard
 
 An adapter object is defined for each environment to map keyboard commands to actions and extract observations as pixels.
 """
-
+from utilsRecord import getNextTarget
 import abc
 import argparse
 import ctypes
@@ -191,8 +191,9 @@ class Interactive(abc.ABC):
 
     def _on_close(self):
        # print(self.recording)
-        print('saving')
-        with open('recordings/record3','wb') as f:
+        target=getNextTarget()
+        print('saving to ',target)
+        with open(target,'wb') as f:
             pickle.dump(self.recording,f)
         print('saved.')
         self._env.close()
