@@ -27,6 +27,7 @@ DORENDER=True
 #DORENDER=False
 
 recording='recordings/record1'
+recording='recordings/record2'
 
 if(REPLAY):
     with open(recording,'rb') as f:
@@ -104,13 +105,6 @@ class TetrisController(gym.Wrapper):
                 break
         return ob, totrew, terminated, truncated, info
 
-def make_retro(*, game, state=None, **kwargs):
-    if state is None:
-        state = retro.State.DEFAULT
-    env = retro.make(game, state, **kwargs)
-    #env = TetrisController(env, n=4)
-    env = TetrisController(env, n=CONTROLLERSTEPS)
-    return env
 
 
 def wrap_deepmind_retro(env):
@@ -120,8 +114,6 @@ def wrap_deepmind_retro(env):
     env = WarpFrame(env)
     env = ClipRewardEnv(env)
     return env
-
-
 
 
 
@@ -135,10 +127,14 @@ def ppoMain():
     args = parser.parse_args()
 
     def make_env():
+
         if DORENDER:
-            env = make_retro(game=args.game, state=args.state, scenario=args.scenario)
+            env = retro.make(args.game, args.state, scenario=args.scenario)
         else:
-            env = make_retro(game=args.game, state=args.state, scenario=args.scenario, render_mode=None)
+            env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=None)
+
+        env = TetrisController(env, n=CONTROLLERSTEPS)
+
         env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
