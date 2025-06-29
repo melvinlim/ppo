@@ -16,10 +16,6 @@ from stable_baselines3.common.vec_env import (
 
 import retro
 import random
-import time
-
-#REPLAY=False
-REPLAY=True
 
 import pickle
 
@@ -27,11 +23,7 @@ DORENDER=True
 #DORENDER=False
 
 recording='recordings/record1'
-recording='recordings/record2'
-
-if(REPLAY):
-    with open(recording,'rb') as f:
-        replayRecords=pickle.load(f)
+#recording='recordings/record2'
 
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
@@ -45,6 +37,12 @@ MODELTOTALTIMESTEPS=2048*32
 class TetrisController(gym.Wrapper):
 
     def __init__(self, env, n):
+
+        self.replayRecords=[]
+
+        with open(recording,'rb') as f:
+            self.replayRecords=pickle.load(f)
+
         self.totaltime=0
         self.records=[]
 
@@ -79,14 +77,13 @@ class TetrisController(gym.Wrapper):
             self.curac=[0]*9
             self.curac[offset]=1
             
-            if REPLAY:
-                #import time
-                #time.sleep(0.2)
-                recordlen=len(replayRecords)
-                if(recordlen>0):
-                    self.curac=replayRecords.pop()
-                    self.curac=list(map(int,self.curac))
-                    print(recordlen,self.curac)
+            #import time
+            #time.sleep(0.2)
+            recordlen=len(self.replayRecords)
+            if(recordlen>0):
+                self.curac=self.replayRecords.pop()
+                self.curac=list(map(int,self.curac))
+                print(recordlen,self.curac)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
             if(self.curac==[0]*9):
