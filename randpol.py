@@ -38,6 +38,7 @@ class RandomController(gym.Wrapper):
         gym.Wrapper.__init__(self, env)
         self.n = n
         self.curac = None
+        self.actionlen=len(self.env.buttons)
 
     def reset(self, **kwargs):
         self.curac = None
@@ -51,26 +52,16 @@ class RandomController(gym.Wrapper):
         prevoffset=0
         offset=0
         for i in range(self.n):
+            #print(self.env.buttons)
 
-            offset=random.randint(0,4)
-            if(offset>0):
-                offset+=4
+            offset=random.randint(4,6)
 
             #print(offset)
 
-            self.curac=[0]*9
+            self.curac=[0]*self.actionlen
             self.curac[offset]=1
             
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
-            if(self.curac==[0]*9):
-                pass
-                #print('giving negative reward')
-                #rew=-0.001
-            elif(self.curac[1]>0 or self.curac[2]>0 or self.curac[3]>0 or self.curac[4]>0):
-                pass
-                #print(self.curac)
-                #rew=-0.005
-                #rew=-0.5
             #print(self.curac)
             totrew += rew
             #print('reward: ',rew,'/',totrew)
@@ -93,14 +84,15 @@ import os
 def ppoMain():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--game", default="Tetris-GameBoy")
+    #parser.add_argument("--game", default="Tetris-GameBoy")
+    parser.add_argument("--game", default="Pong-Atari2600")
     parser.add_argument("--state", default=retro.State.DEFAULT)
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
     modelPath='models/cnn-'+args.game+'.zip'
 
-    def make_env1():
+    def make_env():
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
         env = RandomController(env, CONTROLLERSTEPS)
         env.reset(seed=0)
@@ -109,7 +101,7 @@ def ppoMain():
    
     cb=CheckpointCallback(10000,'saves')
 
-    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env1] * 8), n_stack=4))
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
         env=venv,
