@@ -22,9 +22,6 @@ import pickle
 #RENDERMODE=None
 RENDERMODE='human'
 
-#recording='recordings/record1'
-recording='recordings/record2'
-
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
 
@@ -36,7 +33,7 @@ MODELTOTALTIMESTEPS=2048*32
 
 class TetrisController(gym.Wrapper):
 
-    def __init__(self, env, n):
+    def __init__(self, env, n, recording):
 
         self.replayRecords=[]
 
@@ -123,39 +120,45 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
-    def make_env():
-
+    def make_env1():
+        recording='recordings/record1'
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
-
-        env = TetrisController(env, n=CONTROLLERSTEPS)
-
+        env = TetrisController(env, CONTROLLERSTEPS, recording)
+        env.reset(seed=0)
+        env = wrap_deepmind_retro(env)
+        return env
+    
+    def make_env2():
+        recording='recordings/record2'
+        env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
+        env = TetrisController(env, CONTROLLERSTEPS, recording)
         env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
 
-    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env1] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
         env=venv,
-        #learning_rate=lambda f: f * 2.5e-4,
-        #n_steps=128,
-        #batch_size=32,
-        #n_epochs=4,
-        #gamma=0.99,
-        #gae_lambda=0.95,
-        #clip_range=0.1,
-        #ent_coef=0.01,
         verbose=1,
     )
     model=model.load(path='cnn-Tetris-GameBoy',env=venv)
     model.learn(
-        #total_timesteps=100_000_000,
-        #total_timesteps=4000000,
-        #total_timesteps=4000,
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
-        #callback=cb,
     )
+    venv.close()
+
+    model.save(path='cnn-Tetris-GameBoy')
+
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env2] * 8), n_stack=4))
+    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    model.learn(
+        total_timesteps=MODELTOTALTIMESTEPS,
+        log_interval=1,
+    )
+    venv.close()
+
     model.save(path='cnn-Tetris-GameBoy')
 
 if __name__ == "__main__":
