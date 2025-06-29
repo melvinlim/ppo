@@ -117,6 +117,9 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
+    modelPath='cnn-'+args.game
+    assert(modelPath=='cnn-Tetris-GameBoy')
+
     def make_env():
         recording='recordings/target'
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
@@ -131,14 +134,14 @@ def ppoMain():
         env=venv,
         verbose=1,
     )
-    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    model=model.load(path=modelPath,env=venv)
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
     )
     venv.close()
 
-    model.save(path='cnn-Tetris-GameBoy')
+    model.save(path=modelPath)
 
 if __name__ == "__main__":
     ppoMain()
