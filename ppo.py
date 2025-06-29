@@ -117,7 +117,7 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
-    modelPath='models/cnn-'+args.game
+    modelPath='models/cnn-'+args.game+'.zip'
 
     def make_env():
         recording='recordings/target'

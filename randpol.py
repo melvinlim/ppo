@@ -31,7 +31,7 @@ MODELTOTALTIMESTEPS=2048*32
 #CONTROLLERSTEPS=4*8
 #MODELTOTALTIMESTEPS=2048*32/8
 
-class TetrisController(gym.Wrapper):
+class RandomController(gym.Wrapper):
 
     def __init__(self, env, n):
 
@@ -88,7 +88,7 @@ def wrap_deepmind_retro(env):
     env = ClipRewardEnv(env)
     return env
 
-
+import os
 
 def ppoMain():
 
@@ -98,9 +98,11 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
+    modelPath='models/cnn-'+args.game+'.zip'
+
     def make_env1():
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
-        env = TetrisController(env, CONTROLLERSTEPS)
+        env = RandomController(env, CONTROLLERSTEPS)
         env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
@@ -113,7 +115,11 @@ def ppoMain():
         env=venv,
         verbose=1,
     )
-    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    if(os.path.exists(modelPath)):
+        print('loading model from modelPath:',modelPath)
+        model=model.load(path=modelPath,env=venv)
+    else:
+        print('warning, modelPath:',modelPath,'not found.  training a new model')
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
@@ -121,7 +127,7 @@ def ppoMain():
     )
     venv.close()
 
-    model.save(path='cnn-Tetris-GameBoy')
+    model.save(path=modelPath)
 
 if __name__ == "__main__":
     while(True):
