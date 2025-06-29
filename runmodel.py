@@ -43,6 +43,8 @@ def ppoMain():
     parser.add_argument("--scenario", default=None)
     args = parser.parse_args()
 
+    modelPath='models/cnn-'+args.game
+
     def make_env():
         env = make_retro(game=args.game, state=args.state, scenario=args.scenario)
         env.reset(seed=0)
@@ -64,7 +66,7 @@ def ppoMain():
         #ent_coef=0.01,
         verbose=1,
     )
-    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    model=model.load(path=modelPath,env=venv)
 
     vec_env = model.get_env()
     obs = vec_env.reset()

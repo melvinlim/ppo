@@ -8,6 +8,9 @@ spf=1/fps
 def main():
        #env = retro.make(game="Tetris-GameBoy")
        env = retro.make(game="Pong-Atari2600")
+       print(env.buttons)
+       print('press any key to continue')
+       input()
        env.reset()
        t=0
        while True:
