@@ -130,7 +130,7 @@ class Interactive(abc.ABC):
                         keys.append(name)
 
             act = self.keys_to_act(keys)
-            print(act)
+            #print(act)
 
             if not self._sync or act is not None:
                 self.recording.insert(0,act)
