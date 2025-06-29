@@ -5,7 +5,6 @@ Train an agent using Proximal Policy Optimization from Stable Baselines 3
 import argparse
 
 import gymnasium as gym
-import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import ClipRewardEnv, WarpFrame
 from stable_baselines3.common.vec_env import (
@@ -19,8 +18,8 @@ import random
 
 import pickle
 
-#RENDERMODE=None
 RENDERMODE='human'
+RENDERMODE=None
 
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
