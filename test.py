@@ -1,0 +1,28 @@
+import retro
+
+import time
+
+fps=60
+spf=1/fps
+
+def main():
+       #env = retro.make(game="Airstriker-Genesis")
+       env = retro.make(game="Tetris-GameBoy")
+       env.reset()
+       t=0
+       while True:
+               action = env.action_space.sample()
+               time.sleep(spf)
+               t+=1
+               observation, reward, terminated, truncated, info = env.step(action)
+#               print(t,action,observation,reward)
+               print(t,action,reward)
+               env.render()
+               if terminated or truncated:
+                                       env.reset()
+                                       #env.close()
+                                       print('terminated or truncated')
+
+
+if __name__ == "__main__":
+    main()
