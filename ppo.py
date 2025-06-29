@@ -19,11 +19,11 @@ import random
 
 import pickle
 
-DORENDER=True
-#DORENDER=False
+#RENDERMODE=None
+RENDERMODE='human'
 
-recording='recordings/record1'
-#recording='recordings/record2'
+#recording='recordings/record1'
+recording='recordings/record2'
 
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
@@ -125,10 +125,7 @@ def ppoMain():
 
     def make_env():
 
-        if DORENDER:
-            env = retro.make(args.game, args.state, scenario=args.scenario)
-        else:
-            env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=None)
+        env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
 
         env = TetrisController(env, n=CONTROLLERSTEPS)
 
