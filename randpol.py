@@ -17,7 +17,7 @@ from stable_baselines3.common.vec_env import (
 import retro
 import random
 
-import pickle
+from stable_baselines3.common.callbacks import CheckpointCallback
 
 #RENDERMODE=None
 RENDERMODE='human'
@@ -104,7 +104,9 @@ def ppoMain():
         env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
-    
+   
+    cb=CheckpointCallback(10000,'saves')
+
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env1] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
@@ -115,10 +117,12 @@ def ppoMain():
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
+        callback=cb,
     )
     venv.close()
 
     model.save(path='cnn-Tetris-GameBoy')
 
 if __name__ == "__main__":
-    ppoMain()
+    while(True):
+        ppoMain()
