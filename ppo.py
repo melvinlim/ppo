@@ -136,6 +136,14 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
 
+    def make_env3():
+        recording='recordings/record3'
+        env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
+        env = TetrisController(env, CONTROLLERSTEPS, recording)
+        env.reset(seed=0)
+        env = wrap_deepmind_retro(env)
+        return env
+
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env1] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
@@ -152,6 +160,16 @@ def ppoMain():
     model.save(path='cnn-Tetris-GameBoy')
 
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env2] * 8), n_stack=4))
+    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    model.learn(
+        total_timesteps=MODELTOTALTIMESTEPS,
+        log_interval=1,
+    )
+    venv.close()
+
+    model.save(path='cnn-Tetris-GameBoy')
+
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env3] * 8), n_stack=4))
     model=model.load(path='cnn-Tetris-GameBoy',env=venv)
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,

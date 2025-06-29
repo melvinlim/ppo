@@ -192,7 +192,7 @@ class Interactive(abc.ABC):
     def _on_close(self):
        # print(self.recording)
         print('saving')
-        with open('recordings/record2','wb') as f:
+        with open('recordings/record3','wb') as f:
             pickle.dump(self.recording,f)
         print('saved.')
         self._env.close()
