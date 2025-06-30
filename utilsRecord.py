@@ -12,8 +12,8 @@ def getArgs(defaultgame='Tetris-GameBoy'):
 
 def getNextTarget(path='recordings'):
     files=os.listdir(path)
-    if(len(files==0)):
-        return '/record0'
+    if(len(files)==0):
+        return path+'/record0'
     #print(files)
     files.sort()
     print(files)

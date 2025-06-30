@@ -23,7 +23,8 @@ class Interactive(abc.ABC):
     Base class for making gym environments interactive for human use
     """
 
-    def __init__(self, env, sync=True, tps=60, aspect_ratio=None):
+    def __init__(self, env, sync=True, tps=60, aspect_ratio=None, game="Tetris-GameBoy"):
+        self.game=game
         self.recording=[]
         obs = env.reset(seed=0)
         self._image = self.get_image(obs, env)
@@ -135,6 +136,8 @@ class Interactive(abc.ABC):
             if not self._sync or act is not None:
                 self.recording.insert(0,act)
                 obs, rew, terminated, truncated, _info = self._env.step(act)
+                if(rew>0):
+                    print(self._current_time,rew)
                 done = terminated or truncated
                 self._image = self.get_image(obs, self._env)
                 self._episode_returns += rew
@@ -191,7 +194,7 @@ class Interactive(abc.ABC):
 
     def _on_close(self):
        # print(self.recording)
-        target=getNextTarget()
+        target=getNextTarget("recordings/"+self.game)
         print('saving to ',target)
         with open(target,'wb') as f:
             pickle.dump(self.recording,f)
@@ -248,7 +251,7 @@ class RetroInteractive(Interactive):
             render_mode="rgb_array",
         )
         self._buttons = env.buttons
-        super().__init__(env=env, sync=False, tps=60, aspect_ratio=4 / 3)
+        super().__init__(env=env, sync=False, tps=60, aspect_ratio=4 / 3, game=game)
 
     def get_image(self, _obs, env):
         return env.render()
