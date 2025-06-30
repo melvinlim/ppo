@@ -80,15 +80,7 @@ class TetrisController(gym.Wrapper):
                 #print(recordlen,self.curac)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
-            if(self.curac==[0]*9):
-                pass
-                #print('giving negative reward')
-                #rew=-0.001
-            elif(self.curac[1]>0 or self.curac[2]>0 or self.curac[3]>0 or self.curac[4]>0):
-                pass
-                #print(self.curac)
-                #rew=-0.005
-                #rew=-0.5
+
             #print(self.curac)
             totrew += rew
             #print('reward: ',rew,'/',totrew)
@@ -124,15 +116,15 @@ def ppoMain():
         return env
     
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
-    model = PPO(
-        policy="CnnPolicy",
-        env=venv,
-        verbose=1,
-    )
     if(os.path.exists(modelPath)):
         print('loading model from modelPath:',modelPath)
-        model=model.load(path=modelPath,env=venv)
+        model=PPO.load(path=modelPath,env=venv)
     else:
+        model = PPO(
+            policy="CnnPolicy",
+            env=venv,
+            verbose=1,
+        )
         print('warning, modelPath:',modelPath,'not found.  training a new model')
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
