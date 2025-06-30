@@ -80,6 +80,7 @@ class TetrisController(gym.Wrapper):
                 #print(recordlen,self.curac)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
+            print(info)
 
             #print(self.curac)
             totrew += rew

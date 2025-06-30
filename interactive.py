@@ -136,6 +136,7 @@ class Interactive(abc.ABC):
             if not self._sync or act is not None:
                 self.recording.insert(0,act)
                 obs, rew, terminated, truncated, _info = self._env.step(act)
+                print(_info)
                 if(rew>0):
                     print(self._current_time,rew)
                 done = terminated or truncated
