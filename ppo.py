@@ -2,8 +2,6 @@
 Train an agent using Proximal Policy Optimization from Stable Baselines 3
 """
 
-import argparse
-
 import gymnasium as gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import ClipRewardEnv, WarpFrame
@@ -79,7 +77,7 @@ class TetrisController(gym.Wrapper):
             if(recordlen>0):
                 self.curac=self.replayRecords.pop()
                 self.curac=list(map(int,self.curac))
-                print(recordlen,self.curac)
+                #print(recordlen,self.curac)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
             if(self.curac==[0]*9):
