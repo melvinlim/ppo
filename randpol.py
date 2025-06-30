@@ -17,11 +17,15 @@ import random
 RENDERMODE='human'
 RENDERMODE=None
 
+SEED=0
+SEED=None
+
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
 
 CONTROLLERSTEPS=4
 MODELTOTALTIMESTEPS=2048*32
+MODELTOTALTIMESTEPS=2048*128
 
 #CONTROLLERSTEPS=4*8
 #MODELTOTALTIMESTEPS=2048*32/8
@@ -49,14 +53,19 @@ class RandomController(gym.Wrapper):
         for i in range(self.n):
             #print(self.env.buttons)
 
-            offset=random.randint(4,6)
+            offset=random.randint(4,8)
 
             #print(offset)
-
+            
             self.curac=[0]*self.actionlen
-            self.curac[offset]=1
+            if(offset>5):
+                pass
+            else:
+                self.curac[offset]=1
             
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
+            #if(rew>0):
+            #    print(rew)
             #print(self.curac)
             totrew += rew
             #print('reward: ',rew,'/',totrew)
@@ -86,7 +95,7 @@ def ppoMain():
     def make_env():
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
         env = RandomController(env, CONTROLLERSTEPS)
-        env.reset(seed=0)
+        env.reset(seed=SEED)
         env = wrap_deepmind_retro(env)
         return env
    
