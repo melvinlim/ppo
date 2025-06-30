@@ -40,21 +40,7 @@ def ppoMain():
         return env
 
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
-    model = PPO(
-        policy="CnnPolicy",
-        env=venv,
-        #learning_rate=lambda f: f * 2.5e-4,
-        #n_steps=128,
-        #n_steps=1024,
-        #batch_size=32,
-        #n_epochs=4,
-        #gamma=0.99,
-        #gae_lambda=0.95,
-        #clip_range=0.1,
-        #ent_coef=0.01,
-        verbose=1,
-    )
-    model=model.load(path=modelPath,env=venv)
+    model=PPO.load(path=modelPath,env=venv)
 
     vec_env = model.get_env()
     obs = vec_env.reset()
