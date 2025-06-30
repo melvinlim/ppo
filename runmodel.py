@@ -19,12 +19,6 @@ import retro
 DETERMINISTIC=False
 DETERMINISTIC=True
 
-def make_retro(*, game, state=None, **kwargs):
-    if state is None:
-        state = retro.State.DEFAULT
-    env = retro.make(game, state, **kwargs)
-    return env
-
 
 def wrap_deepmind_retro(env):
     """
@@ -37,7 +31,6 @@ def wrap_deepmind_retro(env):
 def ppoMain():
 
     parser = argparse.ArgumentParser()
-    #parser.add_argument("--game", default="Airstriker-Genesis")
     parser.add_argument("--game", default="Tetris-GameBoy")
     parser.add_argument("--state", default=retro.State.DEFAULT)
     parser.add_argument("--scenario", default=None)
@@ -46,7 +39,7 @@ def ppoMain():
     modelPath='models/cnn-'+args.game+'.zip'
 
     def make_env():
-        env = make_retro(game=args.game, state=args.state, scenario=args.scenario)
+        env = retro.make(game=args.game, state=args.state, scenario=args.scenario)
         env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
