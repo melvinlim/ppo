@@ -80,6 +80,9 @@ class TetrisController(gym.Wrapper):
                 self.curac=self.replayRecords.pop()
                 self.curac=list(map(int,self.curac))
                 #print(recordlen,self.curac)
+            else:
+                #assert(False)
+                pass
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
 
@@ -127,6 +130,11 @@ def ppoMain():
     args = getArgs()
 
     modelPath='models/cnn-'+args.game+'.zip'
+    with open('recordings/target','rb') as f:
+        replayRecords=pickle.load(f)
+        nrecords=len(replayRecords)
+        print('nrecords=',nrecords)
+        MODELTOTALTIMESTEPS=int(nrecords)
 
     def make_env():
         recording='recordings/target'
