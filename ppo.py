@@ -108,14 +108,12 @@ def wrap_deepmind_retro(env):
     env = ClipRewardEnv(env)
     return env
 
+from utilsRecord import getArgs
+
 import os
 def ppoMain():
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--game", default="Tetris-GameBoy")
-    parser.add_argument("--state", default=retro.State.DEFAULT)
-    parser.add_argument("--scenario", default=None)
-    args = parser.parse_args()
+    args = getArgs()
 
     modelPath='models/cnn-'+args.game+'.zip'
 

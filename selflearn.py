@@ -29,6 +29,7 @@ MODELTOTALTIMESTEPS=2048*32
 #CONTROLLERSTEPS=4*8
 #MODELTOTALTIMESTEPS=2048*32/8
 
+from utilsRecord import getArgs
 
 def wrap_deepmind_retro(env):
     """
@@ -42,11 +43,7 @@ def wrap_deepmind_retro(env):
 
 def ppoMain():
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--game", default="Tetris-GameBoy")
-    parser.add_argument("--state", default=retro.State.DEFAULT)
-    parser.add_argument("--scenario", default=None)
-    args = parser.parse_args()
+    args = getArgs()
 
     def make_env1():
         recording='recordings/record1'
@@ -61,14 +58,14 @@ def ppoMain():
         env=venv,
         verbose=1,
     )
-    model=model.load(path='cnn-Tetris-GameBoy',env=venv)
+    model=model.load(path='models/cnn-Tetris-GameBoy',env=venv)
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
     )
     venv.close()
 
-    model.save(path='cnn-Tetris-GameBoy')
+    model.save(path='models/cnn-Tetris-GameBoy')
 
 if __name__ == "__main__":
     ppoMain()

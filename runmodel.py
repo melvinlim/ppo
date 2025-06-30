@@ -2,8 +2,6 @@
 Train an agent using Proximal Policy Optimization from Stable Baselines 3
 """
 
-import argparse
-
 import gymnasium as gym
 import numpy as np
 from stable_baselines3 import PPO
@@ -19,6 +17,7 @@ import retro
 DETERMINISTIC=False
 DETERMINISTIC=True
 
+from utilsRecord import getArgs
 
 def wrap_deepmind_retro(env):
     """
@@ -30,11 +29,7 @@ def wrap_deepmind_retro(env):
 
 def ppoMain():
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--game", default="Tetris-GameBoy")
-    parser.add_argument("--state", default=retro.State.DEFAULT)
-    parser.add_argument("--scenario", default=None)
-    args = parser.parse_args()
+    args = getArgs()
 
     modelPath='models/cnn-'+args.game+'.zip'
 

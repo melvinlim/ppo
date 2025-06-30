@@ -1,4 +1,14 @@
 import os
+import argparse
+import retro
+
+def getArgs(defaultgame='Tetris-GameBoy'):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--game", default=defaultgame)
+    parser.add_argument("--state", default=retro.State.DEFAULT)
+    parser.add_argument("--scenario", default=None)
+    args = parser.parse_args()
+    return args
 
 def getNextTarget(path='recordings'):
     files=os.listdir(path)

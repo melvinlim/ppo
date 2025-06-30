@@ -2,8 +2,6 @@
 Train an agent using Proximal Policy Optimization from Stable Baselines 3
 """
 
-import argparse
-
 import gymnasium as gym
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import ClipRewardEnv, WarpFrame
@@ -77,15 +75,11 @@ def wrap_deepmind_retro(env):
     return env
 
 import os
+from utilsRecord import getArgs
 
 def ppoMain():
 
-    parser = argparse.ArgumentParser()
-    #parser.add_argument("--game", default="Tetris-GameBoy")
-    parser.add_argument("--game", default="Pong-Atari2600")
-    parser.add_argument("--state", default=retro.State.DEFAULT)
-    parser.add_argument("--scenario", default=None)
-    args = parser.parse_args()
+    args = getArgs("Pong-Atari2600")
 
     modelPath='models/cnn-'+args.game+'.zip'
 
