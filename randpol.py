@@ -5,7 +5,6 @@ Train an agent using Proximal Policy Optimization from Stable Baselines 3
 import argparse
 
 import gymnasium as gym
-import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import ClipRewardEnv, WarpFrame
 from stable_baselines3.common.vec_env import (
@@ -17,10 +16,8 @@ from stable_baselines3.common.vec_env import (
 import retro
 import random
 
-from stable_baselines3.common.callbacks import CheckpointCallback
-
-#RENDERMODE=None
 RENDERMODE='human'
+RENDERMODE=None
 
 CONTROLLERSTEPS=4           #original value
 MODELTOTALTIMESTEPS=2048    #2048 seems to be the minimum value
@@ -99,8 +96,6 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
    
-    cb=CheckpointCallback(10000,'saves')
-
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
@@ -115,10 +110,10 @@ def ppoMain():
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
-        callback=cb,
     )
     venv.close()
 
+    print('saving model to:',modelPath)
     model.save(path=modelPath)
 
 if __name__ == "__main__":
