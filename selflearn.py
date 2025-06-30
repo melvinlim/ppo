@@ -44,28 +44,28 @@ def wrap_deepmind_retro(env):
 def ppoMain():
 
     args = getArgs()
+    modelPath='models/cnn-'+args.game+'.zip'
 
-    def make_env1():
-        recording='recordings/record1'
+    def make_env():
         env = retro.make(args.game, args.state, scenario=args.scenario, render_mode=RENDERMODE)
-        env.reset(seed=0)
+        #env.reset(seed=0)
         env = wrap_deepmind_retro(env)
         return env
     
-    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env1] * 8), n_stack=4))
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
     model = PPO(
         policy="CnnPolicy",
         env=venv,
         verbose=1,
     )
-    model=model.load(path='models/cnn-Tetris-GameBoy',env=venv)
+    model=model.load(path=modelPath,env=venv)
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
     )
     venv.close()
 
-    model.save(path='models/cnn-Tetris-GameBoy')
+    model.save(path=modelPath)
 
 if __name__ == "__main__":
     ppoMain()
