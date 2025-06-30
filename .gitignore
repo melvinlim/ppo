@@ -1,3 +1,4 @@
+*.json
 *.bk2
 recordings
 venv

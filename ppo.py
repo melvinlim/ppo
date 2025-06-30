@@ -31,7 +31,7 @@ MODELTOTALTIMESTEPS=2048*32
 class TetrisController(gym.Wrapper):
 
     def __init__(self, env, n, recording):
-
+        self.prevError=0
         self.replayRecords=[]
 
         with open(recording,'rb') as f:
@@ -80,7 +80,15 @@ class TetrisController(gym.Wrapper):
                 #print(recordlen,self.curac)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
-            print(info)
+
+            #print(info)
+            error=abs(info['ball_y']-info['p1_pos'])
+            if(error>self.prevError):
+                rew = -1
+            else:
+                rew = 1
+            self.prevError=error
+            #print(rew)
 
             #print(self.curac)
             totrew += rew
