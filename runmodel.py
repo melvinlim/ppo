@@ -39,7 +39,6 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
 
-    #venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 1), n_stack=1))
     model=PPO.load(path=modelPath,env=venv)
 

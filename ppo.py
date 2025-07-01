@@ -129,16 +129,20 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
     
-    #venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 1), n_stack=1))
     if(os.path.exists(modelPath)):
         print('loading model from modelPath:',modelPath)
         model=PPO.load(path=modelPath,env=venv)
+        print('target_kl=',model.target_kl)
+        model.target_kl=0.02
+        print('target_kl=',model.target_kl)
     else:
         model = PPO(
             policy="CnnPolicy",
             env=venv,
             verbose=1,
+            target_kl=0.02,
+            n_epochs=5,
         )
         print('warning, modelPath:',modelPath,'not found.  training a new model')
     model.learn(
