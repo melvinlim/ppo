@@ -49,8 +49,6 @@ class TetrisController(gym.Wrapper):
 
         terminated = False
         truncated = False
-        totrew = 0
-        prevoffset=0
         offset=0
         #self.curac = ac
         #print(self.curac)
@@ -58,24 +56,21 @@ class TetrisController(gym.Wrapper):
 
         #offset=random.randint(0,8)
 
-        offset=random.randint(0,4)
-        if(offset>0):
-            offset+=4
+        #offset=random.randint(0,4)
+        #if(offset>0):
+        #    offset+=4
 
         #print(offset)
 
-        self.curac=[0]*9
-        self.curac[offset]=1
+        #self.curac=[0]*9
+        #self.curac[offset]=1
         
         #import time
         #time.sleep(0.2)
-        recordlen=len(self.replayRecords)
-        if(recordlen>0):
-            self.curac=self.replayRecords.pop()
-            self.curac=list(map(int,self.curac))
-            #print(recordlen,self.curac)
-        else:
-            assert(False)
+
+        self.curac=self.replayRecords.pop()
+        self.curac=list(map(int,self.curac))
+        #print(recordlen,self.curac)
 
         ob, rew, terminated, truncated, info = self.env.step(self.curac)
 
@@ -99,9 +94,7 @@ class TetrisController(gym.Wrapper):
             #print(rew)
 
         #print(self.curac)
-        totrew += rew
-        #print('reward: ',rew,'/',totrew)
-        return ob, totrew, terminated, truncated, info
+        return ob, rew, terminated, truncated, info
 
 
 
