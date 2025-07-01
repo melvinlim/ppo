@@ -39,7 +39,6 @@ class TetrisController(gym.Wrapper):
         with open(recording,'rb') as f:
             self.replayRecords=pickle.load(f)
 
-        self.totaltime=0
         self.records=[]
 
         gym.Wrapper.__init__(self, env)
@@ -86,7 +85,7 @@ class TetrisController(gym.Wrapper):
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
 
             #print(info)
-            if True:
+            if False:
                 if(info['ball_x'] < self.ball_x0):
                     if(not self.returnedBall):
                         #print(i,'returned ball.')
@@ -122,7 +121,7 @@ def wrap_deepmind_retro(env):
     return env
 
 from utilsRecord import getArgs
-
+import math
 import os
 def ppoMain():
 
@@ -133,7 +132,8 @@ def ppoMain():
         replayRecords=pickle.load(f)
         nrecords=len(replayRecords)
         print('nrecords=',nrecords)
-        MODELTOTALTIMESTEPS=int(nrecords)
+        MODELTOTALTIMESTEPS=int(math.floor(nrecords/2048/4)*2048)
+        print(MODELTOTALTIMESTEPS)
 
     def make_env():
         recording='recordings/target'
@@ -143,7 +143,8 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
     
-    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
+    #venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
+    venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 1), n_stack=1))
     if(os.path.exists(modelPath)):
         print('loading model from modelPath:',modelPath)
         model=PPO.load(path=modelPath,env=venv)
