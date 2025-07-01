@@ -1,11 +1,9 @@
 """
 Train an agent using Proximal Policy Optimization from Stable Baselines 3
 """
-
-import argparse
+from stable_baselines3.common.callbacks import BaseCallback
 
 import gymnasium as gym
-import numpy as np
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import ClipRewardEnv, WarpFrame
 from stable_baselines3.common.vec_env import (
@@ -39,7 +37,14 @@ def wrap_deepmind_retro(env):
     env = ClipRewardEnv(env)
     return env
 
-
+class StepCallback(BaseCallback):
+    def __init__(self):
+        super().__init__()
+    def _on_step(self):
+        #print(self.locals)
+        #print(self.locals['actions'])
+        print(self.locals['clipped_actions'])
+        return True
 
 def ppoMain():
 
@@ -52,16 +57,20 @@ def ppoMain():
         env = wrap_deepmind_retro(env)
         return env
     
+    cb=StepCallback()
+
     venv = VecTransposeImage(VecFrameStack(SubprocVecEnv([make_env] * 8), n_stack=4))
-    model = PPO(
-        policy="CnnPolicy",
-        env=venv,
-        verbose=1,
-    )
-    model=model.load(path=modelPath,env=venv)
+#    model = PPO(
+#        policy="CnnPolicy",
+#        env=venv,
+#        verbose=1,
+#    )
+    #model=model.load(path=modelPath,env=venv)
+    model=PPO.load(path=modelPath,env=venv)
     model.learn(
         total_timesteps=MODELTOTALTIMESTEPS,
         log_interval=1,
+        callback=cb,
     )
     venv.close()
 

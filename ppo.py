@@ -81,8 +81,7 @@ class TetrisController(gym.Wrapper):
                 self.curac=list(map(int,self.curac))
                 #print(recordlen,self.curac)
             else:
-                #assert(False)
-                pass
+                assert(False)
 
             ob, rew, terminated, truncated, info = self.env.step(self.curac)
 
